@@ -1,0 +1,7 @@
+name: CustomItemEvents
+version: '${project.version}'
+main: me.afatcookie.customitemevents.customitemevents.CustomItemEvents
+api-version: 1.19
+depend: [ CustomItems ]
+authors: [ AFatCookie ]
+description: Event handler for custom items, using CustomItems plugin by GavvyDizzle
