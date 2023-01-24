@@ -2,7 +2,6 @@ package me.afatcookie.customitemevents.customitemevents.abstractevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
 
@@ -50,11 +49,12 @@ public abstract class PlaceBucketEvent implements CustomItemEvent<PlayerBucketEm
      * @return the slot of the itemstack.
      */
     protected int findItemSlot(ItemStack itemStack, Player player){
-       for (int i = 0; i < player.getInventory().getSize(); i++){
-           if (player.getInventory().getItem(i) != itemStack) continue;
-           return i;
-       }
-       return -1;
+        for (int i = 0; i < player.getInventory().getSize(); i++){
+            if (player.getInventory().getItem(i) == null) continue;
+            if (!player.getInventory().getItem(i).isSimilar(itemStack)) continue;
+            return i;
+        }
+        return -1;
     }
     /**
      * Find the itemstack of the itemstack parameterized in the parameterized player's inventory
@@ -64,10 +64,11 @@ public abstract class PlaceBucketEvent implements CustomItemEvent<PlayerBucketEm
      */
     protected ItemStack findMatchingItemStack(ItemStack itemStack, Player player){
         for (int i = 0; i < player.getInventory().getSize(); i++){
-            if (player.getInventory().getItem(i) != itemStack) continue;
+            if (player.getInventory().getItem(i) == null) continue;
+            if (!player.getInventory().getItem(i).isSimilar(itemStack)) continue;
             return player.getInventory().getItem(i);
         }
         return null;
     }
-    }
+}
 

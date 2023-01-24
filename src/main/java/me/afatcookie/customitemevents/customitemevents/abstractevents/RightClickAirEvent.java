@@ -41,6 +41,7 @@ public abstract class RightClickAirEvent implements CustomItemEvent<PlayerIntera
         return subclasses;
     }
 
+
     /**
      * Find the slot of the itemstack parameterized in the parameterized player's inventory
      * @param itemStack ItemStack to look for
@@ -49,7 +50,8 @@ public abstract class RightClickAirEvent implements CustomItemEvent<PlayerIntera
      */
     protected int findItemSlot(ItemStack itemStack, Player player){
         for (int i = 0; i < player.getInventory().getSize(); i++){
-            if (player.getInventory().getItem(i) != itemStack) continue;
+            if (player.getInventory().getItem(i) == null) continue;
+            if (!player.getInventory().getItem(i).isSimilar(itemStack)) continue;
             return i;
         }
         return -1;
@@ -62,7 +64,8 @@ public abstract class RightClickAirEvent implements CustomItemEvent<PlayerIntera
      */
     protected ItemStack findMatchingItemStack(ItemStack itemStack, Player player){
         for (int i = 0; i < player.getInventory().getSize(); i++){
-            if (player.getInventory().getItem(i) != itemStack) continue;
+            if (player.getInventory().getItem(i) == null) continue;
+            if (!player.getInventory().getItem(i).isSimilar(itemStack)) continue;
             return player.getInventory().getItem(i);
         }
         return null;

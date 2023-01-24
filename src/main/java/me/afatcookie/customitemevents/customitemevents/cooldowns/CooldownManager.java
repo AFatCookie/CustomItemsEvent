@@ -11,24 +11,24 @@ public class CooldownManager {
 
     public boolean tryUse(Player player, ItemStack itemStack, long cooldownTime) {
         long now = System.currentTimeMillis();
-        CooldownObject object = findCooldownForPlayer(player);
+        CooldownObject object = findCooldownForPlayer(player, itemStack);
         if (object == null){
             cooldowns.add(new CooldownObject(itemStack, player.getUniqueId(), now));
             return true;
         }
-        long lastUse = findCooldownForPlayer(player).getCooldown();
+        long lastUse = findCooldownForPlayer(player, itemStack).getCooldown();
         if (now - lastUse >= cooldownTime ) {
-            cooldowns.remove(findCooldownForPlayer(player));
+            cooldowns.remove(findCooldownForPlayer(player, itemStack));
             cooldowns.add(new CooldownObject(itemStack, player.getUniqueId(), now));
             return true;
         } else {
-            player.sendMessage("You have " + getRemaining(player, cooldownTime) +" seconds left on this cooldown");
+            player.sendMessage("You have " + getRemaining(player, cooldownTime, itemStack) +" seconds left on this cooldown");
             return false;
         }
     }
 
-    public long getRemaining(Player player, long cooldownTime) {
-        CooldownObject cooldownObject = findCooldownForPlayer(player);
+    public long getRemaining(Player player, long cooldownTime, ItemStack itemStack) {
+        CooldownObject cooldownObject = findCooldownForPlayer(player, itemStack);
         if (cooldownObject != null) {
             return (cooldownObject.getCooldown() + cooldownTime - System.currentTimeMillis()) / 1000;
         }
@@ -36,11 +36,11 @@ public class CooldownManager {
     }
 
 
-    public CooldownObject findCooldownForPlayer(Player player){
+    public CooldownObject findCooldownForPlayer(Player player, ItemStack itemStack){
         for (CooldownObject cooldownObject : cooldowns){
-            if (cooldownObject.getPlayer() == player.getUniqueId()){
-                return cooldownObject;
-            }
+            if (cooldownObject.getPlayer() != player.getUniqueId()) continue;
+            if (!cooldownObject.getItemStack().isSimilar(itemStack)) continue;
+            return  cooldownObject;
         }
         return null;
     }
