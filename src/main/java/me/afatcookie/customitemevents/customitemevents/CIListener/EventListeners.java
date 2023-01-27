@@ -2,14 +2,12 @@ package me.afatcookie.customitemevents.customitemevents.CIListener;
 
 import com.mittenmc.customitems.api.CustomItemsAPI;
 import me.afatcookie.customitemevents.customitemevents.CustomItemEvents;
-import me.afatcookie.customitemevents.customitemevents.abstractevents.CustomItemEvent;
-import me.afatcookie.customitemevents.customitemevents.abstractevents.LeftClickAirEvent;
-import me.afatcookie.customitemevents.customitemevents.abstractevents.PlaceBucketEvent;
-import me.afatcookie.customitemevents.customitemevents.abstractevents.RightClickAirEvent;
+import me.afatcookie.customitemevents.customitemevents.abstractevents.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -24,9 +22,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         // Get the custom items in the main and offHand
-        ItemStack mainHandItem = validateMainHand(e.getPlayer());
-        ItemStack offHandItem = validateOffHand(e.getPlayer());
-        ItemStack item = e.getHand() == EquipmentSlot.HAND ? mainHandItem : offHandItem;
+        ItemStack item = determineItemInUse(e.getPlayer(), e.getHand());
         // Check if the item is a custom item
         if (item != null) {
             // Check if the player right-clicked or left-clicked in the air
@@ -45,12 +41,20 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onBucketEvent(PlayerBucketEmptyEvent e){
-        ItemStack mainHandItem = validateMainHand(e.getPlayer());
-        ItemStack offHandItem = validateOffHand(e.getPlayer());
-        ItemStack item = e.getHand() == EquipmentSlot.HAND ? mainHandItem : offHandItem;
+        ItemStack item = determineItemInUse(e.getPlayer(), e.getHand());
         if (item != null) {
             for (PlaceBucketEvent useBucketEvent : PlaceBucketEvent.getSubclasses()){
                 executeEvent(useBucketEvent, item,  e);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlaceEvent(BlockPlaceEvent e) {
+        ItemStack item = determineItemInUse(e.getPlayer(), e.getHand());
+        if (item != null) {
+            for (PlayerBlockPlaceEvent blockPlaceEvent : PlayerBlockPlaceEvent.getSubclasses()) {
+                executeEvent(blockPlaceEvent, item, e);
             }
         }
     }
@@ -78,6 +82,12 @@ return customItemsAPI.getCustomItemID(itemStack);
         if (eventClass.getID().equalsIgnoreCase(getId(item))) {
             eventClass.execute(event);
         }
+    }
+
+    private ItemStack determineItemInUse(Player player, EquipmentSlot equipmentSlot){
+        ItemStack mainHandItem = validateMainHand(player);
+        ItemStack offHandItem = validateOffHand(player);
+        return equipmentSlot == EquipmentSlot.HAND ? mainHandItem : offHandItem;
     }
 
 

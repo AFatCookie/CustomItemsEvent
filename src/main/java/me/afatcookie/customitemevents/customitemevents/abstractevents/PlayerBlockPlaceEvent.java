@@ -5,7 +5,7 @@ import me.afatcookie.customitemevents.customitemevents.CustomItemEvents;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
 
@@ -14,31 +14,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class LeftClickAirEvent implements  CustomItemEvent<PlayerInteractEvent>{
-
-    private static final List<LeftClickAirEvent> subclasses = new ArrayList<>();
-
-    static {
-        Reflections reflections = new Reflections("me.afatcookie.customitemevents");
-        Set<Class<? extends LeftClickAirEvent>> subclassesSet = reflections.getSubTypesOf(LeftClickAirEvent.class);
-        for (Class<? extends LeftClickAirEvent> subClass : subclassesSet) {
-            try {
-                subclasses.add(subClass.getDeclaredConstructor().newInstance());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+public abstract class PlayerBlockPlaceEvent implements CustomItemEvent<BlockPlaceEvent>{
+    private static final List<PlayerBlockPlaceEvent> subclasses = new ArrayList<>();
+    public abstract String getID();
 
     protected CustomItemEvents instance = CustomItemEvents.getInstance();
 
     protected CustomItemsAPI customItemsAPI = instance.getCiAPI();
 
-    public abstract String getID();
+    static {
+        // Initialize a new Reflections object, searching for classes within the "me.afatcookie.cievents" package
+        Reflections reflections = new Reflections("me.afatcookie.customitemevents");
+        // Get all subclasses of RightClickAirEvent
+        Set<Class<? extends PlayerBlockPlaceEvent>> subclassesSet = reflections.getSubTypesOf(PlayerBlockPlaceEvent.class);
+        // Iterate through all subclasses
+        for (Class<? extends PlayerBlockPlaceEvent> subClass : subclassesSet) {
+            try {
+                // Attempt to add a new instance of the subclass to the subclasses list
+                // using the class's default constructor
+                subclasses.add(subClass.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                // Print the stack trace of any exceptions that occur
+                e.printStackTrace();
+            }
+        }
+    }
 
-    public abstract void execute(PlayerInteractEvent e);
 
-    public static List<LeftClickAirEvent> getSubclasses(){
+
+    public abstract void execute(BlockPlaceEvent e);
+
+    public static List<PlayerBlockPlaceEvent> getSubclasses(){
         return subclasses;
     }
 

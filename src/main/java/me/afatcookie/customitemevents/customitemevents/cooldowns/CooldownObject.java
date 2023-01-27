@@ -7,20 +7,20 @@ import java.util.UUID;
 
 public class CooldownObject {
 
-    private final ItemStack itemStack;
+    private final String itemStack;
 
     private final UUID player;
 
     private final long cooldown;
 
 
-    public CooldownObject(ItemStack itemStack, UUID player, long cooldown) {
+    public CooldownObject(String itemStack, UUID player, long cooldown) {
         this.itemStack = itemStack;
         this.player = player;
         this.cooldown = cooldown;
     }
 
-    public ItemStack getItemStack() {
+    public String getItemStackName() {
         return itemStack;
     }
 

@@ -1,5 +1,9 @@
 package me.afatcookie.customitemevents.customitemevents.abstractevents;
 
+import com.mittenmc.customitems.api.CustomItemsAPI;
+import me.afatcookie.customitemevents.customitemevents.CustomItemEvents;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +18,10 @@ public abstract class PlayerMovementEvent implements  CustomItemEvent<PlayerMove
 
     private static  final List<PlayerMovementEvent> subclasses = new ArrayList<>();
     public abstract String getID();
+
+    protected CustomItemEvents instance = CustomItemEvents.getInstance();
+
+    protected CustomItemsAPI customItemsAPI = instance.getCiAPI();
 
     static {
         Reflections reflections = new Reflections("me.afatcookie.customitemevents");
@@ -61,6 +69,40 @@ public abstract class PlayerMovementEvent implements  CustomItemEvent<PlayerMove
             return player.getInventory().getItem(i);
         }
         return null;
+    }
+
+    /**
+     * Checks if the item has the ability to have usages, and then gets the item uses. if the item uses are less than or
+     * equal to 0, it'll remove the item. This is meant to be used before executing the functionality of usage items
+     * to prevent any glitches and players getting an extra use.
+     * @param itemStack The item stack to check
+     * @param player Player to check inventory to destroy item
+     * @return if the item has potential to be used or not.
+     */
+    protected boolean hasUsesPotential(ItemStack itemStack, Player player) {
+        if (!customItemsAPI.doesItemHaveUses(itemStack)) return false;
+        if (customItemsAPI.getItemUses(itemStack) <= 0){
+            player.getInventory().setItem(findItemSlot(itemStack, player), new ItemStack(Material.AIR));
+            player.sendMessage(ChatColor.RED + "Your item ran out of usages!");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates the item usage amount, by decreasing it. if the item was on it's last use, it will remove the item.
+     * @param currentUsages current usages at time of execution for the item.
+     * @param decrease the amount to decrease the usages of the item by
+     * @param player Player to look at
+     * @param itemStack Itemstack to check and manage
+     */
+    protected void decreaseItemUsage(int currentUsages, int decrease, Player player, ItemStack itemStack){
+        if (currentUsages > 1) {
+            customItemsAPI.decreaseItemUses(itemStack, decrease);
+        } else {
+            player.getInventory().setItem(findItemSlot(itemStack, player), new ItemStack(Material.AIR));
+            player.sendMessage(ChatColor.RED + "Your item ran out of usages!");
+        }
     }
 }
 
