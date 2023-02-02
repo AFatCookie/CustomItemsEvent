@@ -3,12 +3,14 @@ package me.afatcookie.customitemevents.customitemevents.CIListener;
 import com.mittenmc.customitems.api.CustomItemsAPI;
 import me.afatcookie.customitemevents.customitemevents.CustomItemEvents;
 import me.afatcookie.customitemevents.customitemevents.abstractevents.*;
+import me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.ProjectileHitGroundEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -24,7 +26,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         // Get the custom items in the main and offHand
-        ItemStack item = determineItemInUse(e.getPlayer(), e.getHand());
+        ItemStack item = determineHandInUse(e.getPlayer(), e.getHand());
         // Check if the item is a custom item
         if (item != null) {
             // Check if the player right-clicked or left-clicked in the air
@@ -43,7 +45,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onBucketEvent(PlayerBucketEmptyEvent e){
-        ItemStack item = determineItemInUse(e.getPlayer(), e.getHand());
+        ItemStack item = determineHandInUse(e.getPlayer(), e.getHand());
         if (item != null) {
             for (PlaceBucketEvent useBucketEvent : PlaceBucketEvent.getSubclasses()){
                 executeEvent(useBucketEvent, item,  e);
@@ -53,7 +55,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
-        ItemStack item = determineItemInUse(e.getPlayer(), e.getHand());
+        ItemStack item = determineHandInUse(e.getPlayer(), e.getHand());
         if (item != null) {
             for (PlayerBlockPlaceEvent blockPlaceEvent : PlayerBlockPlaceEvent.getSubclasses()) {
                 executeEvent(blockPlaceEvent, item, e);
@@ -65,6 +67,14 @@ public class EventListeners implements Listener {
     public void onPlayerMoveEvent(PlayerMoveEvent e){
         Player player = e.getPlayer();
         checkPlayerForCI(player, e);
+    }
+
+    @EventHandler
+    public void onProjectileHitGEvent(ProjectileHitEvent e){
+        if (e.getEntity().getCustomName() == null) return;
+        for (ProjectileHitGroundEvent projectileHitGroundEvent : ProjectileHitGroundEvent.getSubclasses()){
+            executeEvent(projectileHitGroundEvent, e.getEntity().getCustomName(), e);
+        }
     }
 
     private void checkPlayerForCI(Player player, PlayerMoveEvent event){
@@ -128,7 +138,23 @@ return customItemsAPI.getCustomItemID(itemStack);
         }
     }
 
-    private ItemStack determineItemInUse(Player player, EquipmentSlot equipmentSlot){
+    /**
+     * This uses the id matching, rather than grabbing the item and checking for the id within the method.
+     * @param eventClass which type of event has happened
+     * @param id id to compare to
+     * @param event gets the event needed to register what happened
+     * @param <T> the event
+     */
+    public <T> void executeEvent(CustomItemEvent<T> eventClass, String id, T event) {
+        // checks if the id provided is equal to any of the classes which extend the eventClass.
+        if (eventClass.getID().equalsIgnoreCase(id)) {
+            eventClass.execute(event);
+        }
+    }
+
+
+
+    private ItemStack determineHandInUse(Player player, EquipmentSlot equipmentSlot){
         ItemStack mainHandItem = validateMainHand(player);
         ItemStack offHandItem = validateOffHand(player);
         return equipmentSlot == EquipmentSlot.HAND ? mainHandItem : offHandItem;
