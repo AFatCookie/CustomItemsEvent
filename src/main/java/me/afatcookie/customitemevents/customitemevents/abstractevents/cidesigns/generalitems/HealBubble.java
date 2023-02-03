@@ -1,9 +1,8 @@
-package me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.commonitems;
+package me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.generalitems;
 
 import me.afatcookie.customitemevents.customitemevents.abstractevents.RightClickAirEvent;
 import me.afatcookie.customitemevents.customitemevents.utils.Utilities;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;

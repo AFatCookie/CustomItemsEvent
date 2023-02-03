@@ -41,8 +41,6 @@ public abstract class RightClickAirEvent implements CustomItemEvent<PlayerIntera
         }
     }
 
-
-
     public abstract void execute(PlayerInteractEvent e);
 
     public static List<RightClickAirEvent> getSubclasses(){

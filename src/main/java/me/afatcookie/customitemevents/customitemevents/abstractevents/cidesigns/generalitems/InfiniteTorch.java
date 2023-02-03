@@ -1,4 +1,4 @@
-package me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.commonitems;
+package me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.generalitems;
 
 import me.afatcookie.customitemevents.customitemevents.CustomItemEvents;
 import me.afatcookie.customitemevents.customitemevents.abstractevents.PlayerBlockPlaceEvent;

@@ -1,4 +1,4 @@
-package me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.commonitems;
+package me.afatcookie.customitemevents.customitemevents.abstractevents.cidesigns.generalitems;
 
 import me.afatcookie.customitemevents.customitemevents.CustomItemEvents;
 import me.afatcookie.customitemevents.customitemevents.abstractevents.PlaceBucketEvent;
@@ -6,10 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class InfiniteLavaBucket extends PlaceBucketEvent {
+public class InfiniteWaterBucket extends PlaceBucketEvent {
     @Override
     public String getID() {
-        return "infinitelavabucket";
+        return "infinitywaterbucket";
     }
 
     @Override
@@ -21,6 +21,6 @@ public class InfiniteLavaBucket extends PlaceBucketEvent {
         ItemStack heldItem = (CustomItemEvents.getInstance().getCiAPI().getCustomItemID(mainHand) != null && CustomItemEvents.getInstance().getCiAPI().
                 getCustomItemID(mainHand).equals(getID())) ? mainHand :
                 offHand;
-        e.setItemStack(heldItem);
+       e.setItemStack(heldItem);
     }
 }

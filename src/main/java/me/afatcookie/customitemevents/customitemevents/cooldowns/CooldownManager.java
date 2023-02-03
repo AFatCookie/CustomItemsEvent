@@ -17,7 +17,7 @@ public class CooldownManager {
             return true;
         }
         long lastUse = findCooldownForPlayer(player, name).getCooldown();
-        if (now - lastUse >= cooldownTime ) {
+        if (now - lastUse >= cooldownTime) {
             cooldowns.remove(findCooldownForPlayer(player, name));
             cooldowns.add(new CooldownObject(name, player.getUniqueId(), now));
             return true;
@@ -30,7 +30,11 @@ public class CooldownManager {
     public long getRemaining(Player player, long cooldownTime, String itemStack) {
         CooldownObject cooldownObject = findCooldownForPlayer(player, itemStack);
         if (cooldownObject != null) {
+            if (((cooldownObject.getCooldown() + cooldownTime - System.currentTimeMillis()) / 1000) < 1){
+    return 1;
+            }else{
             return (cooldownObject.getCooldown() + cooldownTime - System.currentTimeMillis()) / 1000;
+        }
         }
         return 0L;
     }
